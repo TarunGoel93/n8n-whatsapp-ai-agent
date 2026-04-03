@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "974854472388459",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [1984, 4352],
+      "id": "fa40381e-aafa-43f3-8884-4089d763d920",
+      "name": "WhatsApp Send",
+      "webhookId": "a2f89f90-e849-4962-a865-e945c93a4686",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "YOUR_WHATSAPP_API_CREDENTIAL_ID",
+          "name": "Replace with your WhatsApp credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "You are a professional and friendly AI Sales & Support Agent representing **IntelliReach** (Tarun Goel's company in Gurugram).\n\nTagline: Design That Speaks. Delivery That Converts.\n\nCompany Overview:\nIntelliReach builds high-impact digital solutions since 2022. We blend technical expertise with creative vision to deliver stunning designs and measurable business growth.\n\nOur Services:\n• Web Development – Custom websites and web applications (responsive, fast loading, SEO-optimized, secure & scalable)\n• Graphic Design – Logo design, brand identity, marketing materials, UI/UX design\n• SEO Services – Keyword research, on-page SEO, link building, analytics & reporting\n• Content Writing – Engaging, SEO-friendly content\n• Digital Advertising – Google Ads, Social Media Ads, Display & Remarketing\n• Digital PR – Media outreach, press coverage, brand authority & backlinks\n\nConversation Flow:\n1. First message: Warm greeting + introduce yourself as official IntelliReach agent + mention tagline + short intro + list all services + ask what they need.\n2. After they select a service: Ask detailed requirements and goals.\n3. When user wants to schedule a meeting, demo or call: Offer to check calendar availability and book a suitable slot using the tools.\n\nRules: Keep replies short, natural, polite & professional. Never be pushy. Always end with a clear next step."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1488, 4352],
+      "id": "ce03919b-1a6a-46f5-953f-5c9455b1bc67",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.messages[0].from }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [1472, 4704],
+      "id": "84ac586c-df45-4b5c-a91b-0b76307af15d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [1248, 4704],
+      "id": "23c600ec-e96b-443f-a3c8-4c1acc3a5531",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_GROQ_API_CREDENTIAL_ID",
+          "name": "Replace with your Groq credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": ["messages"],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [1168, 4352],
+      "id": "445758b8-01d3-4805-a45b-324dd4949f8c",
+      "name": "WhatsApp Trigger",
+      "webhookId": "bfdfed0b-4f2a-4627-9e33-d41436bf79ed",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "YOUR_WHATSAPP_TRIGGER_CREDENTIAL_ID",
+          "name": "Replace with your WhatsApp Trigger credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "additionalFields": {
+          "topic": "IntelliReach - Discovery / Demo Call",
+          "duration": 30,
+          "timezone": "Asia/Kolkata"
+        }
+      },
+      "type": "n8n-nodes-base.zoomTool",
+      "typeVersion": 1,
+      "position": [1984, 4720],
+      "id": "5e3a34b3-e261-4698-a7f9-644837ca6ba8",
+      "name": "Create a meeting in Zoom",
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "YOUR_ZOOM_OAUTH_CREDENTIAL_ID",
+          "name": "Replace with your Zoom credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "goeltarun15@gmail.com",
+          "mode": "list",
+          "cachedResultName": "goeltarun15@gmail.com"
+        },
+        "timeMin": "={{ $now }}",
+        "timeMax": "={{ $now.plus(7, 'days') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [1648, 4720],
+      "id": "75d32215-a14c-487d-a906-a8be19540f05",
+      "name": "Get availability in a calendar in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_GOOGLE_CALENDAR_CREDENTIAL_ID",
+          "name": "Replace with your Google Calendar credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "goeltarun15@gmail.com",
+          "mode": "list",
+          "cachedResultName": "goeltarun15@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [1808, 4720],
+      "id": "d44876aa-8a78-4d0a-a82d-13dec14f4253",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_GOOGLE_CALENDAR_CREDENTIAL_ID",
+          "name": "Replace with your Google Calendar credential"
+        }
+      }
+    }
+  ],
+  "connections": { ... },   // (same as before - unchanged)
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c99b80b2d9c3d5d357c3e2666d5980fd8f90a7b9fa64177ae5d9125fdf93ee7f"
+  }
+}
